@@ -1,45 +1,3 @@
-// Removed invalid function declaration
-function addTask() {
-    const taskInput = document.getElementById('task-input');
-    const taskList = document.getElementById('task-list');
-    const taskText = taskInput.value.trim();
-    if (taskText === '') {
-        alert('Please enter a task.');
-        return;
-    }
-    const listItem = document.createElement('li');
-    listItem.textContent = taskText;
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.onclick = function() {
-        taskList.removeChild(listItem);
-    }
-    listItem.appendChild(deleteButton);
-    taskList.appendChild(listItem);
-    taskInput.value = '';
-}
-document.addEventListener('DOMContentLoaded', function() {
-    const taskInput = document.getElementById('task-input');
-    const taskList = document.getElementById('task-list');
-    taskInput.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            addTask();
-        }
-    });
-});
-const editBtn = document.getElementById('edit-btn');
-editBtn.addEventListener('click', function() {
-    const taskList = document.getElementById('task-list');
-    const tasks = taskList.getElementsByTagName('li');
-    for (let i = 0; i < tasks.length; i++) {
-        const taskText = tasks[i].textContent.replace('Delete', '').trim();
-        const newTaskText = prompt('Edit task:', taskText);
-        if (newTaskText !== null && newTaskText.trim() !== '') {
-            tasks[i].firstChild.textContent = newTaskText + ' ';
-        }
-    }
-});
-//checlist system adding
 function addTask() {
     const taskInput = document.getElementById('task-input');
     const taskList = document.getElementById('task-list');
@@ -56,11 +14,11 @@ function addTask() {
     checkbox.style.marginRight = '10px';
     checkbox.onclick = function() {
         if (checkbox.checked) {
-            listItem.style.textDecoration = 'line-through';
-            listItem.style.color = '#888';
+            taskSpan.style.textDecoration = 'line-through';
+            taskSpan.style.color = '#888';
         } else {
-            listItem.style.textDecoration = 'none';
-            listItem.style.color = '#444';
+            taskSpan.style.textDecoration = 'none';
+            taskSpan.style.color = '#444';
         }
     };
 
@@ -68,15 +26,41 @@ function addTask() {
     const taskSpan = document.createElement('span');
     taskSpan.textContent = taskText;
 
+    // Create edit button
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.style.marginLeft = '10px';
+    editButton.onclick = function() {
+        if (editButton.textContent === 'Edit') {
+            // Switch to edit mode
+            const editInput = document.createElement('input');
+            editInput.type = 'text';
+            editInput.value = taskSpan.textContent;
+            editInput.style.marginRight = '10px';
+            listItem.insertBefore(editInput, taskSpan);
+            listItem.removeChild(taskSpan);
+            editButton.textContent = 'Save';
+        } else {
+            // Save edited task
+            const editInput = listItem.querySelector('input[type="text"]');
+            taskSpan.textContent = editInput.value.trim() || taskSpan.textContent;
+            listItem.insertBefore(taskSpan, editInput);
+            listItem.removeChild(editInput);
+            editButton.textContent = 'Edit';
+        }
+    };
+
     // Create delete button
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
+    deleteButton.style.marginLeft = '10px';
     deleteButton.onclick = function() {
         taskList.removeChild(listItem);
     };
 
     listItem.appendChild(checkbox);
     listItem.appendChild(taskSpan);
+    listItem.appendChild(editButton);
     listItem.appendChild(deleteButton);
     taskList.appendChild(listItem);
     taskInput.value = '';
@@ -88,5 +72,5 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.key === 'Enter') {
             addTask();
         }
-    })});
-
+    }) ;
+});
